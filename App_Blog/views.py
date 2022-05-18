@@ -4,6 +4,16 @@ from django.shortcuts import render
 def blog_list(request):
     return render(request,'App_Blog/blog_list.html',context={})
 
+@login_required
+def blog_details(request, slug):
+    blog = Blog.objects.get(slug=slug)
+    comment_form = CommentForm()
+    already_liked = Likes.objects.filter(blog=blog, user= request.user)
+    if already_liked:
+        liked = True
+    else:
+        liked = False
+
 
  class UpdateBlog(LoginRequiredMixin, UpdateView):
     model = Blog
