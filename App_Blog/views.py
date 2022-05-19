@@ -1,8 +1,8 @@
 from django.shortcuts import render
 
 # Create your views here.
-def blog_list(request):
-    return render(request,'App_Blog/blog_list.html',context={})
+class MyBlogs(LoginRequiredMixin, TemplateView):
+    template_name = 'App_Blog/my_blogs.html'
 
 class CreateBlog(LoginRequiredMixin, CreateView):
     model = Blog
@@ -16,4 +16,10 @@ class CreateBlog(LoginRequiredMixin, CreateView):
         blog_obj.slug = title.replace(" ", "-") + "-" + str(uuid.uuid4())
         blog_obj.save()
         return HttpResponseRedirect(reverse('index'))
+
+
+class BlogList(ListView):
+    context_object_name = 'blogs'
+    model = Blog
+    template_name = 'App_Blog/list_of_blogs.html'
 
