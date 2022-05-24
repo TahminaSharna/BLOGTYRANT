@@ -33,6 +33,14 @@ def liked(request, pk):
         liked_post.save()
     return HttpResponseRedirect(reverse('App_Blog:blog_details', kwargs={'slug':blog.slug}))
 
+@login_required
+def unliked(request, pk):
+    blog = Blog.objects.get(pk=pk)
+    user = request.user
+    already_liked = Likes.objects.filter(blog=blog, user=user)
+    already_liked.delete()
+    return HttpResponseRedirect(reverse('App_Blog:blog_details', kwargs={'slug':blog.slug}))
+
  
 
 
