@@ -13,6 +13,27 @@ def blog_details(request, slug):
         liked = True
     else:
         liked = False
+    if request.method == 'POST':
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.user = request.user
+            comment.blog = blog
+            comment.save()
+            return HttpResponseRedirect(reverse('App_Blog:blog_details', kwargs={'slug':slug}))
+    return render(request, 'App_Blog/blog_details.html', context={'blog':blog, 'comment_form':comment_form, 'liked':liked,})
+
+@login_required
+def liked(request, pk):
+    blog = Blog.objects.get(pk=pk)
+    user = request.user
+    already_liked = Likes.objects.filter(blog=blog, user=user)
+    if not already_liked:
+        liked_post = Likes(blog=blog, user=user)
+        liked_post.save()
+    return HttpResponseRedirect(reverse('App_Blog:blog_details', kwargs={'slug':blog.slug}))
+
+ 
 
 
  class UpdateBlog(LoginRequiredMixin, UpdateView):
